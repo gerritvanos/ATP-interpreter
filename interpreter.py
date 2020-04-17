@@ -17,32 +17,42 @@ tokens = lex("test.txt")
 print_lex_output(tokens)
 
 
-def parse_operator_tokens(tokens,index):
-    if index < 0:
+def parse_operator_tokens(tokens):
+    if len(tokens) == 0:
         return []
-    if tokens[index].token_type in (token_types.OPERATOR_DELEN, token_types.OPERATOR_KEER, token_types.OPERATOR_MIN, token_types.OPERATOR_PLUS, token_types.OPERATOR_MACHT):
-        return [op_node(node,tokens[index].value,node)] + parse_operator_tokens(tokens,index-1) 
-    elif tokens[index].token_type == token_types.INTEGER:
-        return [int_node(tokens[index])] + parse_operator_tokens(tokens,index-1) 
-    return parse_operator_tokens(tokens,index-1)
+    a, *tail = tokens
+    if a.token_type in (token_types.OPERATOR_DELEN, token_types.OPERATOR_KEER, token_types.OPERATOR_MIN, token_types.OPERATOR_PLUS, token_types.OPERATOR_MACHT):
+        return [op_node(node,a.value,node)] + parse_operator_tokens(tail) 
+    elif a.token_type == token_types.INTEGER:
+        return [int_node(a)] + parse_operator_tokens(tail) 
+    return parse_operator_tokens(tail)
+#
 
-def parse_operators(nodes, operators, index):
-    if index  < 0:
-        return nodes
-    elif isinstance(nodes[index],op_node):
-        if nodes[index].op in operators:
-            new_node = op_node(nodes.pop(index+1),nodes.pop(index).op,nodes[index-1])
-            nodes[index-1] = new_node
-            return  parse_operators(nodes, operators, index-2)
-    return parse_operators(nodes, operators, index-1)
+def check_operator(a,b,c, operators):
+    if isinstance(b,op_node):
+        if b.op in operators:
+            new_node = op_node(a,b.op,c)
+            return [new_node]
+    return [a,b,c]
+
+def parse_operators(nodes : list, operators : tuple):
+    if len(nodes) == 3:
+        a,b,c = nodes
+        return check_operator(a,b,c,operators)
+    a, b, *tail = nodes
+    new_lst = parse_operators(tail,operators)
+    if len(new_lst) == 1:
+        c = new_lst[0]
+        extra =[]
+    else:
+        c , *extra = new_lst
+    return check_operator(a,b,c,operators) + extra
 
 def parse_row_tokens(tokens):
-    numbers_operators = parse_operator_tokens(tokens,len(tokens)-1)
-    power_lst = parse_operators(numbers_operators,(op_macht,),len(numbers_operators)-1)
-    mul_dev_lst = parse_operators(power_lst,(op_keer,op_delen),len(power_lst)-1)
-    output = parse_operators(mul_dev_lst,(op_min,op_plus),len(mul_dev_lst)-1)
-    # for i in power_lst:
-    #     print(i)
+    numbers_operators = parse_operator_tokens(tokens)
+    power_lst = parse_operators(numbers_operators,(op_macht,))
+    mul_dev_lst = parse_operators(power_lst,(op_keer,op_delen))
+    output = parse_operators(mul_dev_lst,(op_min,op_plus))
     return output[0]
 
 
