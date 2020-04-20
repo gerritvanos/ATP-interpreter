@@ -7,9 +7,12 @@ def get_and_split_input(fname : str)->str:
     infile = open(fname,'r')
     input_str = infile.read()
     str_lst = input_str.split("\n")
+    for row in str_lst:
+        if row.strip() == '':
+            str_lst.remove(row)
     input_lst = []
     for item in str_lst:
-        input_lst.append(item.split(" "))
+        input_lst.append(item.strip().split(" "))
     return input_lst
 
 def get_token(input_str : str) -> token: 
@@ -23,8 +26,22 @@ def get_token(input_str : str) -> token:
         return token(token_types.OPERATOR_DELEN, op_delen)
     elif input_str == token_types.OPERATOR_KEER.__name__:
         return token(token_types.OPERATOR_KEER, op_keer)
+    elif input_str == token_types.OPERATOR_ASSIGN.__name__:
+        return token(token_types.OPERATOR_ASSIGN,op_assign)
+    elif input_str == token_types.OPERATOR_GELIJK_AAN.__name__:
+        return token(token_types.OPERATOR_GELIJK_AAN,op_gelijk)
+    elif input_str == token_types.OPERATOR_KLEINER_DAN.__name__:
+        return token(token_types.OPERATOR_KLEINER_DAN,op_kleiner_dan)
+    elif input_str == token_types.OPERATOR_GROTER_DAN.__name__:
+        return token(token_types.OPERATOR_GROTER_DAN,op_groter_dan)
+    elif input_str == token_types.ALS_STATEMENT.__name__:
+        return token(token_types.ALS_STATEMENT,op_als)
+    elif input_str == token_types.EINDE_ALS.__name__:
+        return token(token_types.EINDE_ALS,"einde")
     elif any(map(str.isdigit,input_str)):
         return token(token_types.INTEGER, int(input_str))
+    else:
+        return token(token_types.NAME,input_str)
 
 def lex(fname : str) -> [token]:
     input_lst = get_and_split_input(fname)

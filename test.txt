@@ -1,3 +1,14 @@
-22 min 5 min 4 plus 10
-22 plus 5 min 4 keer 10 macht 2
-10 min 4
+als_waar 1
+    var_een is 1
+
+    als_waar 0
+        var_twee is 2
+
+        als_waar 0
+            var_drie is 3
+        einde_als
+
+    einde_als
+    var_vier is 4
+    
+einde_als

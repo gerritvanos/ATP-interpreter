@@ -19,3 +19,29 @@ class int_node(node):
         return "{}:{}".format(self.__token.token_type.name, self.value)
     def __repr__(self):
         print(self.__str__())
+
+class name_node(node):
+    def __init__(self,token):
+        self.__token = token
+        self.name = token.value
+    def __str__(self):
+        return "{}:{}".format(self.__token.token_type.name, self.name)
+    def __repr__(self):
+        print(self.__str__())
+
+class als_node(node):
+    def __init__(self,conditie,op,eind_locatie):
+        self.conditie = conditie
+        self.op = op
+        self.eind_locatie = eind_locatie
+    def __str__(self):
+        return "conditie: {} : einde_als: {}".format(self.conditie, self.eind_locatie)
+    def __repr__(self):
+        print(self.__str__())
+
+class einde_als_node(node):
+    def __init__(self,regel_nr):
+        regel_nr = regel_nr
+    
+
+
