@@ -71,8 +71,6 @@ def parse_row_tokens(tokens):
     mul_dev_lst = parse_operators(power_lst,(op_keer,op_delen))
     plus_min_lst = parse_operators(mul_dev_lst,(op_min,op_plus))
     operator_output = parse_operators(plus_min_lst,(op_assign,op_gelijk,op_groter_dan,op_kleiner_dan))
-    # for i in operator_output:
-    #     print(i)
     output = parse_als(operator_output)
     return output[0]
 

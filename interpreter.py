@@ -24,7 +24,6 @@ def visit(node : node) -> int:
 
 
 output = parse_program("test.txt")
-
 for row in range(len(output)):
     prev_row = row
     if row_number == row:

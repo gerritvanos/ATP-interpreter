@@ -1,7 +1,8 @@
-als_waar 1
+test is 10 gelijk_aan 11
+als_waar test
     var_een is 1
 
-    als_waar 0
+    als_waar test
         var_twee is 2
 
         als_waar 0
@@ -10,5 +11,5 @@ als_waar 1
 
     einde_als
     var_vier is 4
-    
+
 einde_als
