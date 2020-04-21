@@ -13,6 +13,8 @@ class token_types(Enum):
     OPERATOR_GROTER_DAN = 10, "groter_dan"
     ALS_STATEMENT = 11, "als_waar"
     EINDE_ALS = 12, "einde_als"
+    ZOLANG_START = 13, "zolang"
+    ZOLANG_EINDE = 14, "einde_zolang"
     NAME = 100, "NAME"
 
     def __new__(cls, value, name):

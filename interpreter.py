@@ -15,8 +15,10 @@ def visit(node : node) -> int:
             global_program_state = node.op(node.lhs.name,visit(node.rhs),global_program_state)
             return None
         return node.op(visit(node.lhs),visit(node.rhs))
-    if isinstance(node,als_node):
+    if isinstance(node,als_node) or isinstance(node,zolang_node):
         row_number += node.op(visit(node.conditie),node.eind_locatie)
+    if isinstance(node,einde_zolang):
+        row_number -= node.terug_locatie
     if isinstance(node,int_node):
         return node.value
     if isinstance(node,name_node):
@@ -24,11 +26,12 @@ def visit(node : node) -> int:
 
 
 output = parse_program("test.txt")
-for row in range(len(output)):
-    prev_row = row
-    if row_number == row:
-        visit(output[row])
-        if prev_row == row_number:
-            row_number +=1
+
+while(row_number < len(output)):
+    prev_row = row_number
+    visit(output[row_number])
+    if prev_row == row_number:
+        row_number +=1
+    print(global_program_state)
 
 print(global_program_state)

@@ -38,6 +38,10 @@ def get_token(input_str : str) -> token:
         return token(token_types.ALS_STATEMENT,op_als)
     elif input_str == token_types.EINDE_ALS.__name__:
         return token(token_types.EINDE_ALS,"einde")
+    elif input_str == token_types.ZOLANG_START.__name__:
+        return token(token_types.ZOLANG_START,"einde")
+    elif input_str == token_types.ZOLANG_EINDE.__name__:
+        return token(token_types.ZOLANG_EINDE,"einde")
     elif any(map(str.isdigit,input_str)):
         return token(token_types.INTEGER, int(input_str))
     else:

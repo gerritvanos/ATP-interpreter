@@ -1,15 +1,18 @@
-test is 10 gelijk_aan 11
-als_waar test
-    var_een is 1
-
-    als_waar test
-        var_twee is 2
+test is 5
+zolang test
+    als_waar 1
+        var_een is 1
 
         als_waar 0
-            var_drie is 3
+            var_twee is 2
+
+            als_waar 0
+                var_drie is 3
+            einde_als
+
+            var is 10
         einde_als
-
+        var_vier is 4
+        test is test min 1
     einde_als
-    var_vier is 4
-
-einde_als
+einde_zolang
