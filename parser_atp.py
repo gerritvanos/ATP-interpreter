@@ -74,20 +74,11 @@ def remove_als(nodes):
     return (nodes,None)
 
 def parse_row_tokens(tokens):
-    numbers_operators = parse_tokens_to_nodes(tokens)
-    
-    removed_als = remove_als(numbers_operators)
-    
-    power_lst = parse_operators(removed_als[0],(op_macht,))
-    mul_dev_lst = parse_operators(power_lst,(op_keer,op_delen))
-    plus_min_lst = parse_operators(mul_dev_lst,(op_min,op_plus))
-    operator_output = parse_operators(plus_min_lst,(op_assign,op_gelijk,op_groter_dan,op_kleiner_dan))
-
+    removed_als = remove_als(parse_tokens_to_nodes(tokens))
+    operator_output = parse_operators(parse_operators(parse_operators(parse_operators(removed_als[0],(op_macht,)),(op_keer,op_delen)),(op_min,op_plus)),(op_assign,op_gelijk,op_groter_dan,op_kleiner_dan))
     if removed_als[1] is not None:
         operator_output = [removed_als[1]] + operator_output
-    
-    output_als = parse_condition(operator_output,als_node)
-    output = parse_condition(output_als,zolang_node)
+    output = parse_condition(parse_condition(operator_output,als_node),zolang_node)
     return output[0]
 
 def find_node_backwards(nodes,node_type):
