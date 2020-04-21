@@ -17,7 +17,7 @@ def parse_tokens_to_nodes(tokens : [token]):
     elif a.token_type == token_types.EINDE_ALS:
         return [einde_als_node()] + parse_tokens_to_nodes(tail)
     elif a.token_type == token_types.ZOLANG_START:
-        return [zolang_node(node,op_als,0)] + parse_tokens_to_nodes(tail)
+        return [zolang_node(node,a.value,0)] + parse_tokens_to_nodes(tail)
     elif a.token_type == token_types.ZOLANG_EINDE:
         return [einde_zolang(0)] + parse_tokens_to_nodes(tail)
     elif a.token_type == token_types.NAME:
@@ -68,13 +68,24 @@ def parse_condition(nodes,node_type):
         b, *extra = new_lst
     return check_condition(a,b,node_type) + extra
 
+def remove_als(nodes):
+    if isinstance(nodes[0],als_node):
+        return (nodes[1:],nodes[0])
+    return (nodes,None)
 
 def parse_row_tokens(tokens):
     numbers_operators = parse_tokens_to_nodes(tokens)
-    power_lst = parse_operators(numbers_operators,(op_macht,))
+    
+    removed_als = remove_als(numbers_operators)
+    
+    power_lst = parse_operators(removed_als[0],(op_macht,))
     mul_dev_lst = parse_operators(power_lst,(op_keer,op_delen))
     plus_min_lst = parse_operators(mul_dev_lst,(op_min,op_plus))
     operator_output = parse_operators(plus_min_lst,(op_assign,op_gelijk,op_groter_dan,op_kleiner_dan))
+
+    if removed_als[1] is not None:
+        operator_output = [removed_als[1]] + operator_output
+    
     output_als = parse_condition(operator_output,als_node)
     output = parse_condition(output_als,zolang_node)
     return output[0]
@@ -99,7 +110,7 @@ def fill_condition(nodes,node_type,end_node_type):
     if isinstance(a,node_type):
         value = find_node_backwards(tail,end_node_type)
         einde_index = len(tail) - value
-        return [node_type(a.conditie,a.op,einde_index+1)] + fill_condition(tail[0:einde_index-1],node_type,end_node_type) + tail[einde_index-1:einde_index+value]
+        return [node_type(a.conditie,a.op,einde_index+1)] + fill_condition(tail[:einde_index-1],node_type,end_node_type) + tail[einde_index-1:einde_index+value]
     return [a] + fill_condition(tail,node_type,end_node_type)
 
 def fill_end_condition(nodes,node_type,end_node_type):
@@ -107,16 +118,14 @@ def fill_end_condition(nodes,node_type,end_node_type):
         return nodes
     *head, a = nodes
     if isinstance(a,node_type):
-        einde_index = len(head) - find_node_forwards(head,end_node_type)
-        return fill_condition(head[:-1],node_type,end_node_type) + head[einde_index:] +[node_type(einde_index)]
-    return [a] + fill_condition(head,node_type,end_node_type)
+        einde_index = (len(head) - find_node_forwards(head,end_node_type)) *-1
+        return  fill_condition(head,node_type,end_node_type) +[node_type(einde_index)]
+    return  fill_end_condition(head,node_type,end_node_type) + [a]
 
 
 def parse_program(file_name):
     op_output = list(map(parse_row_tokens,lex(file_name)))
-    output = fill_condition(op_output,als_node,einde_als_node)
-    snd_output = fill_condition(output,zolang_node,einde_zolang)
-    thrd_output = fill_end_condition(snd_output,einde_zolang,zolang_node)
-    for item in thrd_output:
-        print(item)
-    return thrd_output
+    als_filled = fill_condition(op_output,als_node,einde_als_node)
+    zolang_filled = fill_condition(als_filled,zolang_node,einde_zolang)
+    final_output = fill_end_condition(zolang_filled,einde_zolang,zolang_node)
+    return final_output

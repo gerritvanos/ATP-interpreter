@@ -1,18 +1,21 @@
 test is 5
+counter is 0
 zolang test
-    als_waar 1
-        var_een is 1
-
+    als_waar 10 gelijk_aan 10
+        counter is counter plus 1
         als_waar 0
-            var_twee is 2
+            var2 is 2
 
             als_waar 0
-                var_drie is 3
+                var3 is 3
             einde_als
 
             var is 10
         einde_als
-        var_vier is 4
-        test is test min 1
+        var4 is 4
+        var_var is 22
     einde_als
+    var_test_twee is 23
+    test is test min 1
 einde_zolang
+var_end is 16

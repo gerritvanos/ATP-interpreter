@@ -3,6 +3,6 @@ class token():
         self.token_type = token_type
         self.value = value
     def __str__(self):
-        return "type: {} , value: {}".format(self.token_type.name ,self.value)
+        return "(type: {} , value: {})".format(self.token_type.name ,self.value)
     def __repr__(self):
-        print(self.__str__())
+        return self.__str__()

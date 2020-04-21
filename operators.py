@@ -29,6 +29,12 @@ def op_als(conditie, aantal_regels):
 
 def op_assign(name,value,program_state):
     output = program_state.copy()
-    to_append = {name:value}
+    to_append = {name:value, "row_number":program_state["row_number"] + 1}
     output.update(to_append)
+    return output
+
+def update_row_number(aantal_regels,program_state):
+    output = program_state.copy()
+    to_change = {"row_number":program_state["row_number"] + aantal_regels}
+    output.update(to_change)
     return output

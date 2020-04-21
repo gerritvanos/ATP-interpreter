@@ -6,32 +6,25 @@ from token_types import token_types
 from parser_atp import parse_program
 
 global_program_state = {}
-row_number = 0
-def visit(node : node) -> int:
-    global global_program_state
-    global row_number
+def visit(node : node,program_state) -> int:
     if isinstance(node,op_node):
         if node.op == op_assign:
-            global_program_state = node.op(node.lhs.name,visit(node.rhs),global_program_state)
-            return None
-        return node.op(visit(node.lhs),visit(node.rhs))
+            return node.op(node.lhs.name,visit(node.rhs,program_state),program_state)
+        return node.op(visit(node.lhs,program_state),visit(node.rhs,program_state))
     if isinstance(node,als_node) or isinstance(node,zolang_node):
-        row_number += node.op(visit(node.conditie),node.eind_locatie)
+        return update_row_number(node.op(visit(node.conditie,program_state),node.eind_locatie),program_state)
     if isinstance(node,einde_zolang):
-        row_number -= node.terug_locatie
+        return update_row_number(node.terug_locatie,program_state)
+    if isinstance(node,einde_als_node):
+        return update_row_number(1,program_state)
     if isinstance(node,int_node):
-        return node.value
+        return node.value 
     if isinstance(node,name_node):
-        return global_program_state[node.name]
+        return program_state[node.name]
 
-
-output = parse_program("test.txt")
-
-while(row_number < len(output)):
-    prev_row = row_number
-    visit(output[row_number])
-    if prev_row == row_number:
-        row_number +=1
-    print(global_program_state)
-
-print(global_program_state)
+def run_program(program,program_state = {"row_number":0}):
+    if program_state["row_number"] >= len(program):
+        return program_state
+    return run_program(program,visit(program[program_state["row_number"]],program_state))
+ 
+print(run_program(parse_program("test.txt")))
