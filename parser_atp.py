@@ -3,8 +3,9 @@ from operators import *
 from token_class import token
 from token_types import token_types
 from lex import lex
+from typing import List,Tuple,Callable,Union
 
-def parse_tokens_to_nodes(tokens : [token]):
+def parse_tokens_to_nodes(tokens : List[token]) -> List[node]:
     if len(tokens) == 0:
         return []
     a, *tail = tokens
@@ -24,14 +25,14 @@ def parse_tokens_to_nodes(tokens : [token]):
         return [name_node(a)] + parse_tokens_to_nodes(tail)
     return parse_tokens_to_nodes(tail)
 
-def check_operator(a,b,c, operators):
+def check_operator(a : node ,b : node,c : node, operators : Tuple[Callable]) -> List[node]:
     if isinstance(b,op_node):
         if b.op in operators:
             new_node = op_node(a,b.op,c)
             return [new_node]
     return [a,b,c]
 
-def parse_operators(nodes : list, operators : tuple):
+def parse_operators(nodes : List[node], operators : Tuple[Callable]) -> List[node]:
     if len(nodes) < 3:
         return nodes
     if len(nodes) == 3:
@@ -46,14 +47,14 @@ def parse_operators(nodes : list, operators : tuple):
         c , *extra = new_lst
     return check_operator(a,b,c,operators) + extra
 
-def check_condition(a,b,node_type):
+def check_condition(a : node, b : node, node_type : node) -> List[node]:
     if isinstance(a,node_type):
         if a.op in (op_als,):
             new_node = node_type(b,a.op,None)
             return [new_node]
     return [a,b]
 
-def parse_condition(nodes,node_type):
+def parse_condition(nodes : List[node], node_type : node) -> List[node]:
     if len(nodes) <= 1:
         return nodes
     if len(nodes) == 2:
@@ -68,33 +69,44 @@ def parse_condition(nodes,node_type):
         b, *extra = new_lst
     return check_condition(a,b,node_type) + extra
 
-def remove_als(nodes):
-    if isinstance(nodes[0],als_node):
+def remove_als_zolang(nodes : List[node]) -> Tuple[node, Union[node,None]]:
+    if isinstance(nodes[0],als_node) or isinstance(nodes[0],zolang_node):
         return (nodes[1:],nodes[0])
     return (nodes,None)
 
-def parse_row_tokens(tokens):
-    removed_als = remove_als(parse_tokens_to_nodes(tokens))
-    operator_output = parse_operators(parse_operators(parse_operators(parse_operators(removed_als[0],(op_macht,)),(op_keer,op_delen)),(op_min,op_plus)),(op_assign,op_gelijk,op_groter_dan,op_kleiner_dan))
+def parse_row_tokens(tokens : List[token]) -> List[node]:
+    # numbers_operators = parse_tokens_to_nodes(tokens)
+    
+    # removed_als = remove_als(numbers_operators)
+    
+    # power_lst = parse_operators(removed_als[0],(op_macht,))
+    # mul_dev_lst = parse_operators(power_lst,(op_keer,op_delen))
+    # plus_min_lst = parse_operators(mul_dev_lst,(op_min,op_plus))
+    # operator_output = parse_operators(plus_min_lst,(op_assign,op_gelijk,op_groter_dan,op_kleiner_dan))
+
+    removed_als = remove_als_zolang(parse_tokens_to_nodes(tokens))
+    operator_output = parse_operators( parse_operators(parse_operators(parse_operators(removed_als[0],(op_macht,)),(op_keer,op_delen)),(op_min,op_plus)),(op_assign,op_gelijk,op_groter_dan,op_kleiner_dan))
     if removed_als[1] is not None:
         operator_output = [removed_als[1]] + operator_output
-    output = parse_condition(parse_condition(operator_output,als_node),zolang_node)
+    
+    output_als = parse_condition(operator_output,als_node)
+    output = parse_condition(output_als,zolang_node)
     return output[0]
 
-def find_node_backwards(nodes,node_type):
+def find_node_backwards(nodes : List[node], node_type : node) -> int:
     if isinstance(nodes[len(nodes)-1],node_type):
         return 0
     else:
         return 1 + find_node_backwards(nodes[:-1],node_type)
 
 #find zolang bij einde_zolang
-def find_node_forwards(nodes,node_type):
+def find_node_forwards(nodes : List[node], node_type : node) -> int:
     if isinstance(nodes[0],node_type):
         return 0 
     else:
         return 1 + find_node_forwards(nodes[1:],node_type)
 
-def fill_condition(nodes,node_type,end_node_type):
+def fill_condition(nodes : List[node], node_type : node, end_node_type : node) -> List[node]:
     if len(nodes) ==1:
         return nodes
     a, *tail = nodes
@@ -104,7 +116,7 @@ def fill_condition(nodes,node_type,end_node_type):
         return [node_type(a.conditie,a.op,einde_index+1)] + fill_condition(tail[:einde_index-1],node_type,end_node_type) + tail[einde_index-1:einde_index+value]
     return [a] + fill_condition(tail,node_type,end_node_type)
 
-def fill_end_condition(nodes,node_type,end_node_type):
+def fill_end_condition(nodes : List[node], node_type : node, end_node_type : node) -> List[node]:
     if len(nodes) <=1:
         return nodes
     *head, a = nodes
@@ -114,7 +126,7 @@ def fill_end_condition(nodes,node_type,end_node_type):
     return  fill_end_condition(head,node_type,end_node_type) + [a]
 
 
-def parse_program(file_name):
+def parse_program(file_name : str) -> List[node]:
     op_output = list(map(parse_row_tokens,lex(file_name)))
     als_filled = fill_condition(op_output,als_node,einde_als_node)
     zolang_filled = fill_condition(als_filled,zolang_node,einde_zolang)

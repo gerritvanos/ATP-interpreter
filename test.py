@@ -28,6 +28,5 @@ print("new:")
 print(new)
 print(new == old)
 
-
 lst = [1,2,3,4]
 print(lst[1:])

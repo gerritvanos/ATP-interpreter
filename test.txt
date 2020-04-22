@@ -19,3 +19,4 @@ zolang test
     test is test min 1
 einde_zolang
 var_end is 16
+var_end2 is 16

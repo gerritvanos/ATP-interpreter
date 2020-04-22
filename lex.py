@@ -1,9 +1,9 @@
 from token_class import token
 from token_types import token_types
 from operators import *
+from typing import List
 
-
-def get_and_split_input(fname : str)->str:
+def get_and_split_input(fname : str)->List[List[str]]:
     infile = open(fname,'r')
     input_str = infile.read()
     str_lst = input_str.split("\n")
@@ -42,11 +42,11 @@ def get_token(input_str : str) -> token:
     else:
         return token(token_types.NAME,input_str)
 
-def lex(fname : str) -> [token]:
+def lex(fname : str) -> List[List[token]]:
     input_lst = get_and_split_input(fname)
     return list(map(lambda row: list(map(get_token,row)),input_lst))
 
-def print_lex_output(tokens:[[token]]):
+def print_lex_output(tokens:List[List[token]]):
     for row in range(len(tokens)):
         print("row:",row)
         for token in tokens[row]:

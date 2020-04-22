@@ -4,9 +4,9 @@ from nodes import *
 from operators import *
 from token_types import token_types
 from parser_atp import parse_program
+from typing import List
 
-global_program_state = {}
-def visit(node : node,program_state) -> int:
+def visit(node : node,program_state : dict) -> dict:
     if isinstance(node,op_node):
         if node.op == op_assign:
             return node.op(node.lhs.name,visit(node.rhs,program_state),program_state)
@@ -22,9 +22,10 @@ def visit(node : node,program_state) -> int:
     if isinstance(node,name_node):
         return program_state[node.name]
 
-def run_program(program,program_state = {"row_number":0}):
+def run_program(program : List[node],program_state : dict) -> dict:
     if program_state["row_number"] >= len(program):
         return program_state
     return run_program(program,visit(program[program_state["row_number"]],program_state))
  
-print(run_program(parse_program("test.txt")))
+start_state =  {"row_number":0}
+print(run_program(parse_program("test.txt"),start_state))
