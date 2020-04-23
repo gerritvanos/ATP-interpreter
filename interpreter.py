@@ -4,9 +4,14 @@ from nodes import *
 from operators import *
 from token_types import token_types
 from parser_atp import parse_program
-from typing import List
+from typing import List,Union
+from program_state import program_state
+from time import time
+import sys
+import threading
 
-def visit(node : node,program_state : dict) -> dict:
+sys.setrecursionlimit(0x100000)
+def visit(node : node,program_state : program_state) -> Union[program_state,int]:
     if isinstance(node,op_node):
         if node.op == op_assign:
             return node.op(node.lhs.name,visit(node.rhs,program_state),program_state)
@@ -20,12 +25,19 @@ def visit(node : node,program_state : dict) -> dict:
     if isinstance(node,int_node):
         return node.value 
     if isinstance(node,name_node):
-        return program_state[node.name]
+        return program_state.variables[node.name]
+    print("yolo")
 
-def run_program(program : List[node],program_state : dict) -> dict:
-    if program_state["row_number"] >= len(program):
+def run_program(program : List[node],program_state : program_state) -> program_state:
+    if program_state.row_number >= len(program):
+        print("finished")
         return program_state
-    return run_program(program,visit(program[program_state["row_number"]],program_state))
+    print(program_state)
+    return run_program(program,visit(program[program_state.row_number],program_state))
  
-start_state =  {"row_number":0}
-print(run_program(parse_program("test.txt"),start_state))
+#should be container
+start_time = time()
+start_state = program_state(0,{})
+output = run_program(parse_program("test.txt"),start_state)
+print(output)
+print("time to run program: ",time()-start_time)

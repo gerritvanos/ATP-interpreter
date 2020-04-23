@@ -85,10 +85,10 @@ def parse_row_tokens(tokens : List[token]) -> List[node]:
     # operator_output = parse_operators(plus_min_lst,(op_assign,op_gelijk,op_groter_dan,op_kleiner_dan))
 
     removed_als = remove_als_zolang(parse_tokens_to_nodes(tokens))
-    operator_output = parse_operators( parse_operators(parse_operators(parse_operators(removed_als[0],(op_macht,)),(op_keer,op_delen)),(op_min,op_plus)),(op_assign,op_gelijk,op_groter_dan,op_kleiner_dan))
+    operator_output = parse_operators(parse_operators(parse_operators(parse_operators(removed_als[0],(op_macht,)),(op_keer,op_delen)),(op_min,op_plus)),(op_assign,op_gelijk,op_groter_dan,op_kleiner_dan))
     if removed_als[1] is not None:
         operator_output = [removed_als[1]] + operator_output
-    
+
     output_als = parse_condition(operator_output,als_node)
     output = parse_condition(output_als,zolang_node)
     return output[0]
