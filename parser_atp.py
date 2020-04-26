@@ -4,6 +4,7 @@ from token_class import token
 from token_types import token_types
 from lex import lex
 from typing import List,Tuple,Callable,Union
+from time import time
 
 def parse_tokens_to_nodes(tokens : List[token]) -> List[node]:
     if len(tokens) == 0:
@@ -21,6 +22,8 @@ def parse_tokens_to_nodes(tokens : List[token]) -> List[node]:
         return [zolang_node(node,a.value,0)] + parse_tokens_to_nodes(tail)
     elif a.token_type == token_types.ZOLANG_EINDE:
         return [einde_zolang(0)] + parse_tokens_to_nodes(tail)
+    elif a.token_type == token_types.PRINT:
+        return [print_node(node,a.value)] + parse_tokens_to_nodes(tail)
     elif a.token_type == token_types.NAME:
         return [name_node(a)] + parse_tokens_to_nodes(tail)
     return parse_tokens_to_nodes(tail)
@@ -49,8 +52,11 @@ def parse_operators(nodes : List[node], operators : Tuple[Callable]) -> List[nod
 
 def check_condition(a : node, b : node, node_type : node) -> List[node]:
     if isinstance(a,node_type):
-        if a.op in (op_als,):
+        if a.op == op_als:
             new_node = node_type(b,a.op,None)
+            return [new_node]
+        if a.op == op_print:
+            new_node = node_type(b,a.op)
             return [new_node]
     return [a,b]
 
@@ -69,28 +75,21 @@ def parse_condition(nodes : List[node], node_type : node) -> List[node]:
         b, *extra = new_lst
     return check_condition(a,b,node_type) + extra
 
-def remove_als_zolang(nodes : List[node]) -> Tuple[node, Union[node,None]]:
-    if isinstance(nodes[0],als_node) or isinstance(nodes[0],zolang_node):
+def remove_single_sided(nodes : List[node], node_types : Tuple[node]) -> Tuple[node, Union[node,None]]:
+    if isinstance(nodes[0],node_types):
         return (nodes[1:],nodes[0])
     return (nodes,None)
 
 def parse_row_tokens(tokens : List[token]) -> List[node]:
-    # numbers_operators = parse_tokens_to_nodes(tokens)
+    removed_single_sided = remove_single_sided(parse_tokens_to_nodes(tokens),single_sided_nodes)
+    operator_output = parse_operators(parse_operators(parse_operators(parse_operators(removed_single_sided[0],op_precedence1),op_precedence2),op_precedence3),op_precedence4)
     
-    # removed_als = remove_als(numbers_operators)
-    
-    # power_lst = parse_operators(removed_als[0],(op_macht,))
-    # mul_dev_lst = parse_operators(power_lst,(op_keer,op_delen))
-    # plus_min_lst = parse_operators(mul_dev_lst,(op_min,op_plus))
-    # operator_output = parse_operators(plus_min_lst,(op_assign,op_gelijk,op_groter_dan,op_kleiner_dan))
-
-    removed_als = remove_als_zolang(parse_tokens_to_nodes(tokens))
-    operator_output = parse_operators(parse_operators(parse_operators(parse_operators(removed_als[0],(op_macht,)),(op_keer,op_delen)),(op_min,op_plus)),(op_assign,op_gelijk,op_groter_dan,op_kleiner_dan))
-    if removed_als[1] is not None:
-        operator_output = [removed_als[1]] + operator_output
+    if removed_single_sided[1] is not None:
+        operator_output = [removed_single_sided[1]] + operator_output
 
     output_als = parse_condition(operator_output,als_node)
-    output = parse_condition(output_als,zolang_node)
+    output_zolang = parse_condition(output_als,zolang_node)
+    output = parse_condition(output_zolang,print_node)
     return output[0]
 
 def find_node_backwards(nodes : List[node], node_type : node) -> int:
@@ -99,7 +98,6 @@ def find_node_backwards(nodes : List[node], node_type : node) -> int:
     else:
         return 1 + find_node_backwards(nodes[:-1],node_type)
 
-#find zolang bij einde_zolang
 def find_node_forwards(nodes : List[node], node_type : node) -> int:
     if isinstance(nodes[0],node_type):
         return 0 
@@ -125,10 +123,23 @@ def fill_end_condition(nodes : List[node], node_type : node, end_node_type : nod
         return  fill_condition(head,node_type,end_node_type) +[node_type(einde_index)]
     return  fill_end_condition(head,node_type,end_node_type) + [a]
 
-
 def parse_program(file_name : str) -> List[node]:
     op_output = list(map(parse_row_tokens,lex(file_name)))
     als_filled = fill_condition(op_output,als_node,einde_als_node)
     zolang_filled = fill_condition(als_filled,zolang_node,einde_zolang)
     final_output = fill_end_condition(zolang_filled,einde_zolang,zolang_node)
     return final_output
+
+def verbose_parse_program(f : Callable):
+    def inner(file_name : str):
+        print("start parsing program: {}".format(file_name))
+        start_time = time()
+        output = f(file_name)
+        print("parsed {} lines of code".format(len(output)))
+        print("took:{} seconds\n".format(round(time()-start_time,4)))
+        print("parser output:")
+        for i in range(len(output)):
+            print("regel {}: {}".format(i,output[i]))
+        print("\n")
+        return output
+    return inner

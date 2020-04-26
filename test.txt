@@ -1,5 +1,6 @@
-test is 1320
+test is 10
+test2 is test
 zolang test
     test is test min 1
+    laat_zien test 
 einde_zolang
-var is 8

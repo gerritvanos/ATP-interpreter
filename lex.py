@@ -37,6 +37,8 @@ def get_token(input_str : str) -> token:
         return token(token_types.ZOLANG_START,op_als)
     elif input_str == token_types.ZOLANG_EINDE.__name__:
         return token(token_types.ZOLANG_EINDE,"einde")
+    elif input_str == token_types.PRINT.__name__:
+        return token(token_types.PRINT,op_print)
     elif all(map(str.isdigit,input_str)):
         return token(token_types.INTEGER, int(input_str))
     else:
