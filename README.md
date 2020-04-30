@@ -6,10 +6,10 @@ Ook wordt uitgelegd hoe de interpreter gestart en gebruikt kan worden.
 
 |Contents|
 |-|
-|[Bestands structuur](#Bestandsstructuur)| 
-|[interpreter structuur](#interpreterstructuur)|
-|[Programeertaal (gerrit--)](#Programeertaal )| 
-|[How to run](#howtorun)|
+|[Bestands structuur](##bestands-structuur)| 
+|[interpreter structuur](#interpreter-structuur)|
+|[Programeertaal (gerrit--)](#programeertaal-gerrit--)| 
+|[How to run](#how-to-run)|
 
 ## Bestands structuur
  - <b>interpreter.py :</b> In deze file staat het interpret gedeelte, dus het doorlopen van de AST en uiteindelijk een output genereren.
