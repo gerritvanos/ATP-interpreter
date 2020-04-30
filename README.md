@@ -6,7 +6,7 @@ Ook wordt uitgelegd hoe de interpreter gestart en gebruikt kan worden.
 
 |Contents|
 |-|
-|[Bestands structuur](##bestands-structuur)| 
+|[Bestands structuur](#bestands-structuur)| 
 |[interpreter structuur](#interpreter-structuur)|
 |[Programeertaal (gerrit--)](#programeertaal-gerrit--)| 
 |[How to run](#how-to-run)|
