@@ -1,0 +1,6 @@
+test wordt -10
+test2 wordt test
+zolang test kleiner_dan 0
+    test wordt test plus 1
+    laat_zien test 
+einde_zolang

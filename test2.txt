@@ -1,6 +1,0 @@
-run wordt 10
-test wordt 2.5
-zolang run
-    laat_zien run
-    run wordt run min test
-einde_zolang

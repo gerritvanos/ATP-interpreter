@@ -13,13 +13,13 @@ Ook wordt uitgelegd hoe de interpreter gestart en gebruikt kan worden.
 
 ## Bestands structuur
  - <b>[interpreter.py](interpreter.py) :</b> In deze file staat het interpret gedeelte, dus het doorlopen van de AST en uiteindelijk een output genereren.
- - <b>lex.py :</b> In deze file staat het lexer gedeelte, het omvormen van de file met text naar bruikbare tokens.
- - <b>nodes.py : </b> In deze file staan alle mogelijke nodes van de AST, dit zijn puur classes voor het opslaan van data en hebben alleen een __str__() functie maar geen andere methods.
- - <b>operators.py :</b> In deze file staan alle operators o.a. voor +,-,= maar ook voor bijvoorbeeld de if en functies om de program state te bewerken.
- - <b>parser_atp.py :</b> In deze file staan alle functies om te parsen(de token lijst omvormen naar een AST), de file name is parser_atp.py omdat parser.py een build in python functie.
- - <b>program_state.py :</b> In deze file staat de class voor mijn program state waarin ik de huidige staat van het programma bij houd zoals bijvoorbeeld het huidige regelnummer en de variabelen.
- - <b>token_class.py :</b> In deze file staat de basis token klasse die gebruikt wordt om tokens aan te maken in de lexer.
- - <b>token_types.py : </b> In deze file staat een enum met alle verschillende token types zoals een GETAL en een OPERATOR_KEER bijvoorbeeld.
+ - <b>[lex.py](lex.py) :</b> In deze file staat het lexer gedeelte, het omvormen van de file met text naar bruikbare tokens.
+ - <b>[nodes.py](nodes.py) : </b> In deze file staan alle mogelijke nodes van de AST, dit zijn puur classes voor het opslaan van data en hebben alleen een __str__() functie maar geen andere methods.
+ - <b>[operators.py](operators.py) :</b> In deze file staan alle operators o.a. voor +,-,= maar ook voor bijvoorbeeld de if en functies om de program state te bewerken.
+ - <b>[parser_atp.py](parser_atp.py) :</b> In deze file staan alle functies om te parsen(de token lijst omvormen naar een AST), de file name is parser_atp.py omdat parser.py een build in python functie.
+ - <b>[program_state.py](program_state.py) :</b> In deze file staat de class voor mijn program state waarin ik de huidige staat van het programma bij houd zoals bijvoorbeeld het huidige regelnummer en de variabelen.
+ - <b>[token_class.py](token_class.py) :</b> In deze file staat de basis token klasse die gebruikt wordt om tokens aan te maken in de lexer.
+ - <b>[token_types.py](token_types.py) : </b> In deze file staat een enum met alle verschillende token types zoals een GETAL en een OPERATOR_KEER bijvoorbeeld.
 
 De test.py file en de .txt files zijn voornamelijk voor testen tijdens het maken van het project.
 
