@@ -1,3 +1,6 @@
-als_waar 10 gelijk_aan 10
-    var1 is 10
-einde_als
+run wordt 10
+test wordt 2.5
+zolang run
+    laat_zien run
+    run wordt run min test
+einde_zolang

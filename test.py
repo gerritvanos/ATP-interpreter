@@ -1,5 +1,5 @@
 from token_types import token_types
-
+import functools
 print(token_types.OPERATOR_PLUS)
 def get_and_split_input_old(fname : str)->str:
     infile = open(fname,'r')
@@ -54,3 +54,8 @@ threading.stack_size(0x2000000)
 t = threading.Thread(target=SomeCallable())
 t.start()
 t.join()
+
+lst = [1,3,5,6,2,1]
+
+
+print(functools.reduce(lambda a,b: a if a>b else b ,lst))

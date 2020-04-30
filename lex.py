@@ -39,8 +39,10 @@ def get_token(input_str : str) -> token:
         return token(token_types.ZOLANG_EINDE,"einde")
     elif input_str == token_types.PRINT.__name__:
         return token(token_types.PRINT,op_print)
-    elif all(map(str.isdigit,input_str)):
-        return token(token_types.INTEGER, int(input_str))
+    elif all(map(str.isdigit,input_str)) or (input_str[0] == '-' and all(map(str.isdigit,input_str[1:]))): #plus getal or min getal
+        return token(token_types.GETAL, int(input_str))
+    elif input_str.replace('.','',1).isdigit(): #floats
+        return token(token_types.GETAL,float(input_str))
     else:
         return token(token_types.NAME,input_str)
 

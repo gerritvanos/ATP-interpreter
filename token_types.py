@@ -1,13 +1,13 @@
 from enum import Enum
 
 class token_types(Enum):
-    INTEGER = 1, "INTEGER"
+    GETAL = 1, "GETAL"
     OPERATOR_PLUS = 2, "plus"
     OPERATOR_MIN  = 3, "min"
     OPERATOR_MACHT = 4, "macht"
-    OPERATOR_DELEN = 5, "delen"
+    OPERATOR_DELEN = 5, "delen_door"
     OPERATOR_KEER = 6, "keer"
-    OPERATOR_ASSIGN = 7, "is"
+    OPERATOR_ASSIGN = 7, "wordt"
     OPERATOR_GELIJK_AAN = 8, "gelijk_aan"
     OPERATOR_KLEINER_DAN = 9, "kleiner_dan"
     OPERATOR_GROTER_DAN = 10, "groter_dan"

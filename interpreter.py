@@ -10,13 +10,14 @@ from time import time
 import sys
 import threading
 import platform
+import argparse
 
 def visit(node : node,program_state : program_state) -> Union[program_state,int]:
     if isinstance(node,op_node):
         if node.op == op_assign:
             return node.op(node.lhs.name,visit(node.rhs,program_state),program_state)
         return node.op(visit(node.lhs,program_state),visit(node.rhs,program_state))
-    if isinstance(node,als_node) or isinstance(node,zolang_node):
+    if isinstance(node,(als_node,zolang_node)):
         return update_row_number(node.op(visit(node.conditie,program_state),node.eind_locatie),program_state)
     if isinstance(node,print_node):
         return node.op(visit(node.to_print,program_state),program_state)
@@ -29,53 +30,45 @@ def visit(node : node,program_state : program_state) -> Union[program_state,int]
     if isinstance(node,name_node):
         return program_state.variables[node.name]
 
-
-
-def procces_arguments():
-    file_name = sys.argv[1]
-    verbose = None
-    if(len(sys.argv) >=3):
-        if(sys.argv[2] == "-v"):
-            verbose = True
-    return (file_name,verbose)
-
 def set_stack_recursion():
     sys.setrecursionlimit(0x1000000)
     if platform.system() == "Linux":
-        print("running on linux stack: 2gb\n")
+        print("running on linux stack size: 2gb\n")
         threading.stack_size(2147483648) #set stack to 2gb
     else:
-        print("running on windows stack: 256mb\n")
+        print("running on windows stack size: 256mb\n")
         threading.stack_size(256000000)
-
 
 def main():
     global parse_program
+    parser = argparse.ArgumentParser(description="interpreter for gerrit-- programming language")
+    parser.add_argument("file_name", type=str, metavar='File name', help="the file name that needs to be interpreted")
+    parser.add_argument('-v', dest='verbose', action='store_true',default=False, help="run with verbose parsing")
+    arguments = vars(parser.parse_args())
     set_stack_recursion()
-    
-    arguments = procces_arguments()
-
-    if (arguments[1]==True):
+    if(arguments['verbose'] ==True):
         start_time = time()
+        #use decorated function if verbose == True
         parse_program = verbose_parse_program(parse_program)
-    
-    t = threading.Thread(target=run(arguments[0]))
 
+    program = parse_program(arguments['file_name'])
+    print("program output:")
+    t = threading.Thread(target=run(program))
     t.start()
     t.join()
 
-    if(arguments[1]==True):
-        print("time to run program: ",round(time()-start_time,4))
+    if(arguments['verbose']==True):
+        print("time to run program: {} seconds".format(round(time()-start_time,4)))
 
 class run:
-    def __init__(self,file_name):
-        self._file_name = file_name
+    def __init__(self,program):
+        self._program = program
     def __call__(self):
-        self.run_program(parse_program(self._file_name),program_state(0,{}))
+        self.run_program(self._program,program_state(0,{}))
 
     def run_program(self,program : List[node],program_state : program_state) -> program_state:
         if program_state.row_number >= len(program):
-            print("finished running program\nprogram state at the end of program:")
+            print("\nfinished running program\nprogram state at the end of program:")
             print(program_state,"\n")
             return program_state
         return self.run_program(program,visit(program[program_state.row_number],program_state))

@@ -1,39 +1,40 @@
 from copy import copy
 from program_state import program_state
+from typing import Union
 
-#basic mathematical  operators
-def op_plus(a : int,b : int) -> int:
+#basic mathematical operators for floats and ints
+def op_plus(a : Union[int,float],b : Union[int,float]) -> Union[int,float]:
     return a + b
 
-def op_min(a : int,b : int) -> int:
+def op_min(a : Union[int,float],b : Union[int,float]) -> Union[int,float]:
     return a - b
 
-def op_macht(a : int,b : int) -> int:
+def op_macht(a : Union[int,float],b : Union[int,float]) -> Union[int,float]:
     return a ** b
 
-def op_keer(a : int,b : int) -> int:
+def op_keer(a : Union[int,float],b : Union[int,float]) -> Union[int,float]:
     return a * b
 
-def op_delen(a : int,b : int) -> int:
+def op_delen(a : Union[int,float],b : Union[int,float]) -> Union[int,float]:
     return a / b
 
 #rational operators
-def op_gelijk(a : int,b :int) -> int:
+def op_gelijk(a : Union[int,float],b :Union[int,float]) -> int:
     return int(a == b)
 
-def op_groter_dan(a : int,b : int) -> int:
+def op_groter_dan(a : Union[int,float],b : Union[int,float]) -> int:
     return int(a > b)
 
-def op_kleiner_dan(a : int,b : int) -> int:
+def op_kleiner_dan(a : Union[int,float],b : Union[int,float]) -> int:
     return int(a < b)
 
 #operators to modify program state and check ifs
-def op_als(conditie : int, aantal_regels : int) -> int:
+def op_als(conditie : Union[int,float], aantal_regels : int) -> int:
     if conditie:
         return 1
     return aantal_regels
 
-def op_assign(name : str, value : int, program_state : program_state) -> program_state:
+def op_assign(name : str, value : Union[int,float], program_state : program_state) -> program_state:
     output = copy(program_state)
     to_add = {name:value}
     output.variables.update(to_add)
@@ -45,7 +46,7 @@ def update_row_number(aantal_regels : int, program_state : program_state) -> pro
     output.row_number += aantal_regels
     return output
 
-def op_print(to_print,program_state):
+def op_print(to_print : Union[int,float], program_state : program_state) -> program_state:
     output = copy(program_state)
     output.row_number +=1
     print(to_print)
