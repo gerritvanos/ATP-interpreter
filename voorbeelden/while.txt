@@ -1,0 +1,5 @@
+run wordt 10
+zolang run
+    laat_zien run
+    run wordt run min 1
+einde_zolang

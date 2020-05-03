@@ -30,11 +30,17 @@ def op_kleiner_dan(a : Union[int,float],b : Union[int,float]) -> int:
 
 #operators to modify program state and check ifs
 def op_als(conditie : Union[int,float], aantal_regels : int) -> int:
+    """
+    operator to check if condition and return 1(go to next row) or the amount of rows to skip
+    """
     if conditie:
         return 1
     return aantal_regels
 
 def op_assign(name : str, value : Union[int,float], program_state : program_state) -> program_state:
+    """
+    operator to assign a value to a certain variable. and return a new program state(with row number increased by one)
+    """
     output = copy(program_state)
     to_add = {name:value}
     output.variables.update(to_add)
@@ -42,11 +48,17 @@ def op_assign(name : str, value : Union[int,float], program_state : program_stat
     return output
 
 def update_row_number(aantal_regels : int, program_state : program_state) -> program_state:
+    """
+    operator to increase row number based on aantal_regels
+    """
     output = copy(program_state)
     output.row_number += aantal_regels
     return output
 
 def op_print(to_print : Union[int,float], program_state : program_state) -> program_state:
+    """
+    operator to print the to_print part" and increase row number by one
+    """
     output = copy(program_state)
     output.row_number +=1
     print(to_print)

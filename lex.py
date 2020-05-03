@@ -1,9 +1,13 @@
 from token_class import token
 from token_types import token_types
 from operators import *
-from typing import List
+from typing import List, Callable
 
 def get_and_split_input(fname : str)->List[List[str]]:
+    """
+    function to read in the given file and split it by line and whitespace
+    also remove extranius whitespaces
+    """
     infile = open(fname,'r')
     input_str = infile.read()
     str_lst = input_str.split("\n")
@@ -11,6 +15,10 @@ def get_and_split_input(fname : str)->List[List[str]]:
     return list(map(str.split,list(map(str.strip,str_lst))))
 
 def get_token(input_str : str) -> token: 
+    """
+    get token based on string by comparing it to all token types 
+    if no token type is found name token is constructed because if the string is no keyword it must be a variable name
+    """
     if input_str == token_types.OPERATOR_PLUS.__name__:
         return token(token_types.OPERATOR_PLUS, op_plus)
     elif input_str == token_types.OPERATOR_MIN.__name__:
@@ -32,11 +40,11 @@ def get_token(input_str : str) -> token:
     elif input_str == token_types.ALS_STATEMENT.__name__:
         return token(token_types.ALS_STATEMENT,op_als)
     elif input_str == token_types.EINDE_ALS.__name__:
-        return token(token_types.EINDE_ALS,"einde")
+        return token(token_types.EINDE_ALS,"einde_als")
     elif input_str == token_types.ZOLANG_START.__name__:
         return token(token_types.ZOLANG_START,op_als)
     elif input_str == token_types.ZOLANG_EINDE.__name__:
-        return token(token_types.ZOLANG_EINDE,"einde")
+        return token(token_types.ZOLANG_EINDE,"einde_zolang")
     elif input_str == token_types.PRINT.__name__:
         return token(token_types.PRINT,op_print)
     elif all(map(str.isdigit,input_str)) or (input_str[0] == '-' and all(map(str.isdigit,input_str[1:]))): #plus getal or min getal
@@ -47,11 +55,23 @@ def get_token(input_str : str) -> token:
         return token(token_types.NAME,input_str)
 
 def lex(fname : str) -> List[List[token]]:
-    input_lst = get_and_split_input(fname)
-    return list(map(lambda row: list(map(get_token,row)),input_lst))
+    """
+    function to get the tokens for each line of the input file
+    """
+    return list(map(lambda row: list(map(get_token,row)),get_and_split_input(fname)))
 
-def print_lex_output(tokens:List[List[token]]):
-    for row in range(len(tokens)):
-        print("row:",row)
-        for token in tokens[row]:
-            print(token)
+def verbose_lex(f : Callable):
+    """
+    decorator to function lex for printing a bit more information
+    """
+    def inner(file_name : str):
+        print("start lexing of program located in {}".format(file_name))
+        print("lexer output")
+        tokens = f(file_name)
+        for row in range(len(tokens)):
+            print("line:",row+1)
+            for token in tokens[row]:
+                print(token)
+        print("\n")
+        return tokens
+    return inner

@@ -1,0 +1,4 @@
+to_print wordt 10
+als_waar 10 gelijk_aan to_print
+    laat_zien to_print
+einde_als

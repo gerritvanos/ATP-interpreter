@@ -11,7 +11,8 @@ Ook wordt uitgelegd hoe de interpreter gestart en gebruikt kan worden.
 |[Programeertaal (gerrit--)](#programeertaal-gerrit--)| 
 |[How to run](#how-to-run)|
 
-## Bestands structuur
+# Bestands structuur
+## Bestanden
  - <b>[interpreter.py](interpreter.py) :</b> In deze file staat het interpret gedeelte, dus het doorlopen van de AST en uiteindelijk een output genereren.
  - <b>[lex.py](lex.py) :</b> In deze file staat het lexer gedeelte, het omvormen van de file met text naar bruikbare tokens.
  - <b>[nodes.py](nodes.py) : </b> In deze file staan alle mogelijke nodes van de AST, dit zijn puur classes voor het opslaan van data en hebben alleen een __str__() functie maar geen andere methods.
@@ -23,13 +24,102 @@ Ook wordt uitgelegd hoe de interpreter gestart en gebruikt kan worden.
 
 De test.py file en de .txt files zijn voornamelijk voor testen tijdens het maken van het project.
 
-## interpreter structuur
+## Mappen:
+- <b>test_files</b> Wordt puur gebruikt voor test stukjes code in de programeertaal
+- <b>voorbeelden</b> Deze map bevat onder andere de voorbeelden die in deze readme besproken worden.
 
-## Programeertaal (gerrit--) 
-### Algemene info
+# Interpreter structuur
+## Globale stappen
+De gemaakte code wordt in het algemeen via de 4 onderstaande stappen uitgevoerd, de stappen worden per stuk nog extra uitgelegd.
+1. [Verwerken argumenten](#Verwerken-argumenten)
+2. [Lexen](#Lexen)
+3. [Parsen](#Parsen)
+4. [Runnen](#Runnen)
+
+### 1.Verwerken argumenten:
+Zodra het programma start worde de meegegeven argumenten verwerkt, 1 van de argumenten is de file name deze wordt gebruikt voor het inlezen van de code. Voor uitleg over de argumenten zie [how to run](#how-to-run). Tijdens deze verwerkingsstap worden ook de decorators geassigned op basis van de geselecteerde argumenten. Er zijn 2 decorators zowel voor het lexen als her parsen. <br>
+Daarnaast wordt in deze stap ook de stacksize en recursion depth ingesteld. Vervolgens als alle argumenten verwerkt zijn en er geen errors zijn ontstaan gaat het programma verder met de lex stap.
+
+### 2.Lexen:
+In deze stap wordt de file ingelezen op basis van de file_name, deze file komt het programma in als 1 grote string. Deze string wordt gesplit op `\n` daarna worden alle onnodige spaties en tabs verwijderd(deze worden gebruikt voor indents). De overgebleven lijsten met strings worden vervolgens nogmaals gesplit naar losse woorden. <br>
+Deze woorden worden dan omgezet naar tokens. Deze tokens hebben een type(zoals bijvoorbeeld getal of operator_plus). daarnaast hebben ze ook een value bij een getal is dit het cijfer bijvoorbeeld, bij de operators is dat de functie die bij die operator hoort.
+
+Hieronder een kort voorbeeld:
+```c
+test wordt 2 plus 3
+test2 wordt 10
+```
+resulteert in de volgende tokens
+
+regel 1:
+- (type: NAME , value: test)
+- (type: OPERATOR_ASSIGN , value: op_assign)
+- (type: GETAL , value: 2)
+- (type: OPERATOR_PLUS , value: op_plus)
+- (type: GETAL , value: 3)
+
+regel 2:
+- (type: NAME , value: test2)
+- (type: OPERATOR_ASSIGN , value: op_assign)
+- (type: GETAL , value: 10)
+
+### 3.Parsen:
+De parse stap maakt van de in de vorige stap gegenereerde tokens een uitvoerbare AST(abstract syntax tree), dit wordt ook weer in een aantal afzonderlijke stappen gedaan welke hieronder beschreven worden.<br>
+De AST bestaat uit nodes, er zijn een aantal verschillende nodes, deze zijn te vinden in [nodes.py](nodes.py). Sommige nodes hebben een lhs en/of rhs, hier bevinden zich de "kinderen" van deze node dit zijn ook weer nodes etc.<br>
+In eerst in stantie worden alle regels los geparsed, daarna worden alle regels samen genomen om bijvoorbeeld de einde_als en als bij elkaar te voegen.
+#### stap 1: regel voor regel parsen
+In deze stap wordt elke regel afzonderlijk verwerkt, deze stap returnt dus weer een lijst met nodes, voor elke regel 1 node(met of zonder kinderen).
+##### stap 1.1: tokens naar nodes
+De eerste stap is om alle tokens om te zetten naar nodes, voor nodes met alleen een waarde, zoals de `getal` en `name` node wordt de waarde van de token meteen in de node gezet. Voor nodes die nog andere nodes als kinderen verwachten wordt een node aangemaakt met een lhs en rhs die op een lege node geinitialiseerd worden. Als de token als value een functie heeft wordt deze in de node opgeslagen als de operator.
+##### stap 1.2: verwijderen single sided
+Er zijn verschillende operators mogelijk, single sided en doublesided een `plus` is bijvoorbeeld een double sided maar een als of een print is single sided. De verschillende operators vereisen verschillende manieren van parsen vandaar dat de single sided operators eerst verwijderd worden, deze worden wel opgeslagen en later weer toegevoegd.
+##### stap 1.3: verwerken double sided operators
+Na het verwijderen van de single sided operators worden alle double sided operators verwerkt, dat wordt in de volgorde gedaan zoals aangegeven bij [operators](#operators). Dit wordt gedaan door voor elke prioriteit 1x te parsen.
+De parse functie voor operators werkt als volgt:<br>
+er wordt gekeken of er zich een operator bevind tussen 2 andere nodes, als dat zo is worden de twee andere nodes toegevoegd als rhs en lhs van de operator node.
+
+<b>Voorbeeld:</b> 2 plus 4<br>
+&nbsp;&nbsp;&nbsp;&nbsp; wordt: {lhs: GETAL:2, op: op_plus, rhs: GETAL:4}<br>
+&nbsp;&nbsp;&nbsp;&nbsp; De 2 en 4 worden aan de linker en rechterkant van de plus operator geplaatst.
+
+Door dit voor elke prioriteit te doen worden de rekenregels toegepast.<br>
+schematische weergave van {lhs: GETAL:2, op: op_plus, rhs: GETAL:4}<br>
+![](images/2plus4.png)
+##### stap 1.4 toevoegen single sided
+Na het verwerken van alle double sided operators worden de single sided operators weer toegevoegd die bij stap 1.1 verwijderd zijn.
+
+##### stap 1.5 verwerken single sided
+Na het weer toevoegen van de single sided nodes moeten deze ook verwerkt worden, voor deze nodes geldt dat er maar 1 kind is de rhs. in deze stap worden de bij de eerdere stappen samengevoerde nodes als rhs toegevoegd.<br>
+Er zijn 3 single sided operators:
+- zolang
+- als
+- laat_zien
+
+Voor de laat_zien wordt alleen het bovenstaande gedaan, de zolang en als verwachten ook nog een regelnummer voor het bijbehorende einde. Deze waarde wordt in eerst in stantie op None gezet en wordt in stap 2 ingevuld
+
+<b>voorbeeld:</b> laat_zien 2 plus 4<br>
+&nbsp;&nbsp;&nbsp;&nbsp; wordt: {print: {lhs: GETAL:2, op: op_plus, rhs: GETAL:4}}<br>
+&nbsp;&nbsp;&nbsp;&nbsp; de 2 plus 4 is in stap 1.3 verwerkt en wordt nu als rhs van de print toegevoegd.
+
+Schematische weergave van {print: {lhs: GETAL:2, op: op_plus, rhs: GETAL:4}}<br>
+![](images/laat_zien2plus4.png)
+
+#### stap 2: verwerken alle regels samen 
+In deze stap zijn alle regels al geparsed en is er dus een lijst met nodes(1 node voor elke regel) het grootste deel van deze nodes is al ingevuld. Echter is het voor de als en zolang nog iets meer werk. <br>
+De mannier hoe ifs en daarme while's verwerkt worden is door de conditite te checken at runtime en dan 1 of meerdere regels verder te gaan in het programma afhankelijk van de conditie. Als de conditie waar is wordt het regelnummer met 1 regel verhoogt en wordt dus de 'body' van de if uitgevoerd. Als de conditie niet waar is wordt het regelnummer verhoogt naar het regelnummer waar de einde_als staat en wordt de 'body' dus overgeslagen.<br>
+Voor de zolang(while) geldt hetzelfde behalve dat deze bij de einde zolang weer terug moet naar de bijbehorende zolang.
+
+Dit wordt bereikt door bij elke 'als_node' of 'zolang_node' de bijbehordende 'einde_als' en 'einde_zolang' gezocht dan wordt het verschil in aantal regels tussen beide berekend en opgeslagen in de als/zolang node. Voor de einde zolang geldt hetzelfde maar dan in tegengestelde richting, hier wordt dus het begin gezocht bij de einde node.
+
+Als ook dit aantal regels ingevuld is is het parsen klaar, er is nu een lijst met nodes voor elke regel. Elke regel heeft dus een AST en het hele programma bestaat uit al deze "kleine" AST's. 
+
+### 4.Runnen:
+
+# Programeertaal (gerrit--) 
+## Algemene info
 Ik heb er voor gekozen om mijn eigen programeertaal te maken, mijn doel was om een "vernederlandste" versie van C te maken. In de loop van het proces heb ik er meer een combinatie van preprocessor macro's en C van gemaakt in het nederlands. Hieronder staan alle op dit moment mogelijke commando's uitgelegd met ook wat voorbeeldcode. Het is geen volledige vervanger van C zo is het bijvoorbeeld "nog" niet mogelijk om functies te maken of andere types op te slaan dan getallen. De naam van de taal is "gerrit--" geworden, voornamelijk omdat het door mij bedacht is en nogal vervelend is om in te programeren(vandaar de --).
 
-### Operators
+## Operators
 |operator|uitleg|C equivalent|
 |-|-|-|
 |var1 <b>plus</b> var2| berkent de optelling van de 2 variabeles| var1 + var2|
@@ -44,11 +134,12 @@ Ik heb er voor gekozen om mijn eigen programeertaal te maken, mijn doel was om e
 
 bij alle operators is het mogelijk om deze te combineren, er wordt rekening gehouden met de rekenregels hieronder een lijst met de prioriteit van de operators. Daarnaast kunnen alle variabeles die aangemaakt zijn binnen het programma gebruikt worden op de plaats van var1/var2 in bovenstaande tabel. Tevens kunnen hier ook constantes staan.
 
+<b>
 1. macht
 2. delen/vermenigvuldigen
 3. plus/min
 4. gelijk_aan,groter_dan,kleiner_dan en assignment(wordt)
-
+</b>
 Een aantal voorbeelden voor het gebruik van operators.
 ```c
 var1 = 1            //var1 wordt 1
@@ -57,13 +148,14 @@ var2 = 1 + 2        //var2 wordt 1 plus 2
 3 + pow(2,4)        //3 plus 2 macht 4
 3 * 5/4 + 10        //3 keer 5 delen_door 4 plus 10
 ```
-### keywords
+
+## Keywords
 |keyword|uitleg|C equivalent|
 |-|-|-|
 |<b>als_waar</b> conditie|een if statement die kijkt of de conditie waar* is, als dit zo is dan wordt de "body" van de if uitgevoerd anders wordt er gesprongen naar de bijbehorende einde_als. | if |
 |<b>einde_als</b>|geeft het einde van een if statement aan| de afsluitende } van een if|
 |<b>zolang</b> conditie|een statement die de "body" uitvoert als de conditie waar is, anders wordt er gesprongen naar de bijbehorende einde_zolang | while |
-|<b>einde_zolang</b>| geeft het einde van een zolang loop aan en springt terug naar de bijbehorende zolang en kijkt dan weer opnieuw of de loop uitgevoerd wordt of geskipt.|
+|<b>einde_zolang</b>| geeft het einde van een zolang loop aan en springt terug naar de bijbehorende zolang en kijkt dan weer opnieuw of de loop uitgevoerd wordt of geskipt.|de afsluitende } van een while|
 |<b>laat_zien</b>| print de variabele of uitkomst van een expressie die achter de laat_zien staat, het is alleen mogelijk om 1 variabele of 1 uitkomst tegelijk te printen bijvoobeeld laat_zien var1,var2 is niet mogelijk op dit moment.| printf()|
 
 Hieronder een stukje voorbeeldcode voor het gebruik van als statements en de zolang loop
@@ -99,16 +191,16 @@ output van dit programma:
     1
 */
 ```
-### Belangrijk
-#### Getallen
+## Belangrijk
+### Getallen
 Op dit moment kunnen er alleen maar getallen aangemaakt worden dit kunnen floats of integers zijn, er hoeft niet gespecificeerd te worden welk type het is dit wordt automatisch gedetecteerd. Daarna is het mogelijk om operaties uit te voeren met zowel integers als floats
 ```c
-test_var wordt 10 delen_door 4  //word opgeslagen als 2.5
-test_var2 wordt 2.5             //word opgeslagen als 2.5
-test_var3 wordt 10              //word opgeslagen als 10
-test_var4 wordt -10             //word opgeslagen als -10
+test_var wordt 10 delen_door 4  //wordt opgeslagen als 2.5
+test_var2 wordt 2.5             //wordt opgeslagen als 2.5
+test_var3 wordt 10              //wordt opgeslagen als 10
+test_var4 wordt -10             //wordt opgeslagen als -10
 ```
-#### Variabelen
+### Variabelen
 Variabelen kunnen pas in operators of statements gebruikt worden als deze aangemaakt zijn, de eerste keer dat een variabele naam dus gebruikt wordt moet in combinatie met een <b>wordt</b> operator. Variabelen aanmaken zonder start waarde is niet toegestaan.
 ```c
 //do
@@ -118,8 +210,16 @@ var2 wordt var1 min 5       //var2 = 5
 //don't
 var3 wordt var4 min var1    //var4 is nog nooit aangemaakt en kan dus niet gebruikt worden
 ```
-
-## How to run
+### Regels zonder effect
+Regels code die geen effect heeft zoals in de voorbeelden hieronder kunnen niet uitgevoerd worden.
+Dit komt voornamelijk omdat deze geen effect hebben op het uitvoeren van de code in het algemeen(ze passen de program state niet aan).<br>
+Om eventueel deze regels wel te zien kan dit in een `laat_zien` gezet worden.
+```c
+2 plus 5            //wordt niet uitgevoerd
+test wordt 2 plus 5 //wordt wel uitgevoerd
+laat_zien 2 plus 5  //wordt uitgevoerd en print 7
+```
+# How to run
 De interpreter kan op verschillende mannieren gerunt worden. Alle mannieren gaan ervaruit dat python(minimaal versie 3.6) in het path staat en aangeroepen kan worden vanuit de commandline. Gezien de recursieve functies en het vele gebruik van de stack wordt bij de start van het programma de stack grote veranderd naar de waardes hieronder.
 - linux: <b>2GB</b>
 - windows: <b>256MB</b>
@@ -130,9 +230,18 @@ De interpreter kan op de volgende mannier gestart worden:<br>
 `python interpreter.py file_name`<br>
 Hierbij is file_name de naam van het bestand wat geinterpret dient te worden. Alle file extenties zijn op dit moment ondersteund maar het makkelijkste is een standaard ".txt" bestand gezien deze makkelijk te bewerken is.
 
-Om meer informatie te verkrijgen kan de `-v` optie toegevoegd worden aan het commando, door deze flag toe te voegen wordt er meer informatie geprint zoals de parser output en de tijd die nodig was om het programma te draaien.
+Om meer informatie te verkrijgen kan de `-v` optie toegevoegd worden aan het commando, door deze flag toe te voegen wordt er meer informatie geprint zoals de parser en lexer output.
 
-Daarnaast verzordt de `-h` of `--help` optie een verkorte versie van bovenstaande uitleg.
+Er zijn nog een aantal andere opties die zullen hieronder benoemd worden:
+| optie | beschrijving|
+|-|-|
+|-h | show help messages for all commands|
+|-v| run with verbose lexing and parsing|
+|-l| run with verbose lexing|
+|-p| run with verbose parsing|
+|-s| time statistics|
+
+Daarnaast verzorgt de `-h` of `--help` optie een verkorte versie van bovenstaande uitleg.
 
 Het volledige commando kan er dus als volgt uit zien:<br>
-`python interpreter.py test_file.txt -v`
+`python interpreter.py test_file.txt -v -s`

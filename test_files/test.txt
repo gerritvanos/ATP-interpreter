@@ -1,5 +1,4 @@
-test wordt -10
-test2 wordt test
+laat_zien 2 plus 4
 zolang test kleiner_dan 0
     test wordt test plus 1
     laat_zien test 
