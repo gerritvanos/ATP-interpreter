@@ -114,6 +114,9 @@ Dit wordt bereikt door bij elke 'als_node' of 'zolang_node' de bijbehordende 'ei
 Als ook dit aantal regels ingevuld is is het parsen klaar, er is nu een lijst met nodes voor elke regel. Elke regel heeft dus een AST en het hele programma bestaat uit al deze "kleine" AST's. 
 
 ### 4.Runnen:
+Na het parsen blijft er een gevulde lijst met een "AST" per regel over, om deze vervolgens uit te voeren wordt gebruik gemaakt van een "visit" functie. Deze functie bezoekt als het ware een node in de AST dit gebeurt recursief en de AST wordt dus doorgelopen van boven naar beneden. De getal en name nodes returnen hier hun inhoud(bij de getal node het getal en bij de name node de waarde uit de program state). Tijdens het runnen wordt een program_state bijgehouden, in deze program state staan alle variabelen opgeslagen en het huidige regelnummer. Als een regel voltooid is wordt het regelnummer 1 verhoogt en dus de volgende regel uitgevoerd. Bij de als/zolang wordt het regel nummer aangepast om een deel van de code over te slaan of juist uit te voeren. 
+
+De visit functie returned na het uitvoeren van de hele regel een nieuwe program_state waar het regelnummer in staat wat hierna uitgevoerd moet worden en eventueel wijzigingen in de variabelen.
 
 # Programeertaal (gerrit--) 
 ## Algemene info

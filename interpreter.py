@@ -19,21 +19,21 @@ def visit(node : node,program_state : program_state) -> Union[program_state,Unio
     After all childs have been visited the operator(that belongs to the node) is called and returns a program state.
     This function returns a number(float or int) if a getal_node or name_node is visited otherwise a program_state.
     """
-    if isinstance(node,op_node):
+    if isinstance(node, op_node):
         if node.op == op_assign:
             return node.op(node.lhs.name,visit(node.rhs,program_state),program_state)
         return node.op(visit(node.lhs,program_state),visit(node.rhs,program_state))
-    if isinstance(node,(als_node,zolang_node)):
+    if isinstance(node, (als_node,zolang_node)):
         return update_row_number(node.op(visit(node.conditie,program_state),node.eind_locatie),program_state)
-    if isinstance(node,print_node):
+    if isinstance(node, print_node):
         return node.op(visit(node.to_print,program_state),program_state)
     if isinstance(node,einde_zolang):
         return update_row_number(node.hoeveelheid_regels_terug,program_state)
-    if isinstance(node,einde_als_node):
+    if isinstance(node, einde_als_node):
         return update_row_number(1,program_state)
-    if isinstance(node,getal_node):
+    if isinstance(node, getal_node):
         return node.value 
-    if isinstance(node,name_node):
+    if isinstance(node, name_node):
         return program_state.variables[node.name]
 
 def set_stack_recursion():
