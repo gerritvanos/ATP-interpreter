@@ -113,6 +113,23 @@ Dit wordt bereikt door bij elke 'als_node' of 'zolang_node' de bijbehordende 'ei
 
 Als ook dit aantal regels ingevuld is is het parsen klaar, er is nu een lijst met nodes voor elke regel. Elke regel heeft dus een AST en het hele programma bestaat uit al deze "kleine" AST's. 
 
+<b>Voorbeeld:</b>
+```c
+laat_zien 2 plus 4
+test wordt 10
+zolang test kleiner_dan 0
+    test wordt test plus 1
+    laat_zien test 
+einde_zolang
+```
+<b>Parser output:</b><br>
+regel 0: {print: {lhs: GETAL:2, op: op_plus, rhs: GETAL:4}}<br>
+regel 1: {lhs: NAME:test, op: op_assign, rhs: GETAL:10}<br>
+regel 2: {zolang: conditie: {lhs: NAME:test, op: op_kleiner_dan, rhs: GETAL:0} : einde zolang: 4}<br>
+regel 3: {lhs: NAME:test, op: op_assign, rhs: {lhs: NAME:test, op: op_plus, rhs: GETAL:1}}<br>
+regel 4: {print: NAME:test}<br>
+regel 5: {einde_zolang: hoeveelheid_regels_terug = -3}<br>
+
 ### 4.Runnen:
 Na het parsen blijft er een gevulde lijst met een "AST" per regel over, om deze vervolgens uit te voeren wordt gebruik gemaakt van een "visit" functie. Deze functie bezoekt als het ware een node in de AST dit gebeurt recursief en de AST wordt dus doorgelopen van boven naar beneden. De getal en name nodes returnen hier hun inhoud(bij de getal node het getal en bij de name node de waarde uit de program state). Tijdens het runnen wordt een program_state bijgehouden, in deze program state staan alle variabelen opgeslagen en het huidige regelnummer. Als een regel voltooid is wordt het regelnummer 1 verhoogt en dus de volgende regel uitgevoerd. Bij de als/zolang wordt het regel nummer aangepast om een deel van de code over te slaan of juist uit te voeren. 
 
@@ -248,3 +265,9 @@ Daarnaast verzorgt de `-h` of `--help` optie een verkorte versie van bovenstaand
 
 Het volledige commando kan er dus als volgt uit zien:<br>
 `python interpreter.py test_file.txt -v -s`
+
+# Opdracht requirements:
+Voor de opdracht moest de taal turing compleet zijn, gezien mijn taal de mogelijkheid heeft om berekeningen te doen, deze op te slaan en if-statements en loops mogelijk zijn zou mijn taal daar aan moeten voldoen.
+
+Daarnaast moest er inheritance verwerkt zijn, dit is de vinden in de [nodes.py](nodes.py) file waar alle nodes afgeleid zijn van een basis node.
+verder moesten er minimaal 3 hogere orde functies gebruikt zijn, in zowel de [lexer](lex.py) als de [parser](parser_atp.py) is de `map` functie gebruikt.
