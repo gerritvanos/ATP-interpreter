@@ -4,7 +4,7 @@ from token_class import token
 """
 This file contains all the nodes used in the AST all nodes are derived from the node class
 """
-class node():
+class node:
     def __str__(self) -> str:
         return "basic node, type: {}".format(type(self))
     def __repr__(self) -> str:
@@ -89,6 +89,16 @@ class print_node(node):
     def __str__(self):
         return "{{print: {}}}".format(self.to_print)
     def __repr__(Self):
+        return self.__str__()
+
+# node used to store "const char *" like string
+class str_node(node):
+    def __init__(self, token : token):
+        self.__token = token
+        self.value = token.value
+    def __str__(self) -> str:
+        return "{}:{}".format(self.__token.token_type.name, self.value)
+    def __repr__(self) -> str:
         return self.__str__()
 
 #tuple to store all single sided nodes this makes it easy to check if the node is single sided

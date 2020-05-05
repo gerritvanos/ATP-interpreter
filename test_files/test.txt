@@ -1,6 +1,12 @@
-laat_zien 2 plus 4
-test wordt 10
-zolang test kleiner_dan 0
-    test wordt test plus 1
-    laat_zien test 
-einde_zolang
+run wordt 10
+start wordt run
+
+zolang run
+    laat_zien run 
+    run wordt run min 1 
+einde_zolang 
+
+laat_zien "start waarde"
+laat_zien start
+laat_zien "eind waarde run"
+laat_zien run

@@ -1,5 +1,12 @@
 run wordt 10
+start wordt run
+
 zolang run
-    laat_zien run
-    run wordt run min 1
-einde_zolang
+    laat_zien run 
+    run wordt run min 1 
+einde_zolang 
+
+laat_zien "start waarde"
+laat_zien start
+laat_zien "eind waarde run"
+laat_zien run

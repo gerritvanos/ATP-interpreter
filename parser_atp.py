@@ -32,6 +32,8 @@ def parse_tokens_to_nodes(tokens : List[token]) -> List[node]:
         return [print_node(node,a.value)] + parse_tokens_to_nodes(tail)
     elif a.token_type == token_types.NAME:
         return [name_node(a)] + parse_tokens_to_nodes(tail)
+    elif a.token_type == token_types.STR:
+        return [str_node(a)] + parse_tokens_to_nodes(tail)
     return parse_tokens_to_nodes(tail)
 
 def check_operator(a : node ,b : node,c : node, operators : Tuple[Callable]) -> List[node]:
@@ -195,7 +197,7 @@ def verbose_parse_program(f : Callable):
         print("took: {} seconds to parse program\n".format(round(time()-start_time,4)))
         print("parser output:")
         for i in range(len(output)):
-            print("regel {}: {}".format(i,output[i]))
+            print("regel {}: {}".format(i+1,output[i]))
         print("\n")
         return output
     return inner

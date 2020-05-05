@@ -31,7 +31,7 @@ def visit(node : node,program_state : program_state) -> Union[program_state,Unio
         return update_row_number(node.hoeveelheid_regels_terug,program_state)
     if isinstance(node, einde_als_node):
         return update_row_number(1,program_state)
-    if isinstance(node, getal_node):
+    if isinstance(node, (getal_node,str_node)):
         return node.value 
     if isinstance(node, name_node):
         return program_state.variables[node.name]

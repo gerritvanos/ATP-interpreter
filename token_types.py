@@ -17,6 +17,7 @@ class token_types(Enum):
     ZOLANG_EINDE = 14, "einde_zolang"
     PRINT = 15, "laat_zien"
     NAME = 16, "NAME"
+    STR = 17, "STR"
 
     def __new__(cls, value, name):
         member = object.__new__(cls)

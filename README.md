@@ -176,9 +176,9 @@ var2 = 1 + 2        //var2 wordt 1 plus 2
 |<b>einde_als</b>|geeft het einde van een if statement aan| de afsluitende } van een if|
 |<b>zolang</b> conditie|een statement die de "body" uitvoert als de conditie waar is, anders wordt er gesprongen naar de bijbehorende einde_zolang | while |
 |<b>einde_zolang</b>| geeft het einde van een zolang loop aan en springt terug naar de bijbehorende zolang en kijkt dan weer opnieuw of de loop uitgevoerd wordt of geskipt.|de afsluitende } van een while|
-|<b>laat_zien</b>| print de variabele of uitkomst van een expressie die achter de laat_zien staat, het is alleen mogelijk om 1 variabele of 1 uitkomst tegelijk te printen bijvoobeeld laat_zien var1,var2 is niet mogelijk op dit moment.| printf()|
+|<b>laat_zien</b>| print de variabele of uitkomst van een expressie die achter de laat_zien staat, het is alleen mogelijk om 1 variabele of 1 uitkomst tegelijk te printen bijvoobeeld laat_zien var1,var2 is niet mogelijk op dit moment. daarnaast kunnen strings geprint worden, dit kan door een sting tussen "" achter de laat_zien te zetten. | printf()|
 
-Hieronder een stukje voorbeeldcode voor het gebruik van als statements en de zolang loop
+Hieronder een stukje voorbeeldcode voor het gebruik van als statements en de zolang loop, deze zijn ook te vinden in de map `voorbeelden`.
 ```c
 //if statements
 to_print wordt 10                   //to_print = 10
@@ -192,11 +192,17 @@ output van dit programma:
 
 //while loops
 run wordt 10                //run = 10
+start wordt run             //start = run (10)
+
 zolang run                  //while(run){
     laat_zien run           //  prinf(run)
     run wordt run min 1     //  run--
 einde_zolang                //}
 
+laat_zien "start waarde"    //printf("start waarde")
+laat_zien start             //printf(start)
+laat_zien "eind waarde run" //printf("eind waarde run")
+laat_zien run               //printf(run)
 /*
 output van dit programma:
     10
@@ -209,6 +215,10 @@ output van dit programma:
     3
     2
     1
+    start waarde
+    10
+    eind waarde run
+    0
 */
 ```
 ## Belangrijk

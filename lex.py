@@ -2,6 +2,7 @@ from token_class import token
 from token_types import token_types
 from operators import *
 from typing import List, Callable
+import shlex
 
 def get_and_split_input(fname : str)->List[List[str]]:
     """
@@ -10,9 +11,19 @@ def get_and_split_input(fname : str)->List[List[str]]:
     """
     infile = open(fname,'r')
     input_str = infile.read()
-    str_lst = input_str.split("\n")
+    str_lst = input_str.splitlines()
     str_lst = list(filter(None,str_lst))
-    return list(map(str.split,list(map(str.strip,str_lst))))
+    return list(map(split_without_substr,list(map(str.strip,str_lst))))
+
+def split_without_substr(in_str : str) -> List[str]:
+    """
+    function to split line on spaces except when within ""
+    note: only works if one "" pair is used per rule
+    """
+    if "\"" in in_str:
+        quote_index = in_str.find("\"")
+        return in_str[:quote_index].split() + [in_str[quote_index:]]
+    return in_str.split()
 
 def get_token(input_str : str) -> token: 
     """
@@ -51,6 +62,8 @@ def get_token(input_str : str) -> token:
         return token(token_types.GETAL, int(input_str))
     elif input_str.replace('.','',1).isdigit(): #floats
         return token(token_types.GETAL,float(input_str))
+    elif input_str[0] == "\"":
+        return token(token_types.STR,input_str.strip("\""))
     else:
         return token(token_types.NAME,input_str)
 
@@ -69,7 +82,7 @@ def verbose_lex(f : Callable):
         print("lexer output")
         tokens = f(file_name)
         for row in range(len(tokens)):
-            print("line:",row+1)
+            print("regel:",row+1)
             for token in tokens[row]:
                 print(token)
         print("\n")
