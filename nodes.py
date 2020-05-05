@@ -5,7 +5,10 @@ from token_class import token
 This file contains all the nodes used in the AST all nodes are derived from the node class
 """
 class node():
-    pass
+    def __str__(self) -> str:
+        return "basic node, type: {}".format(type(self))
+    def __repr__(self) -> str:
+        return self.__str__()
 
 #operator node used to store lhs,rhs and the opperator
 class op_node(node):

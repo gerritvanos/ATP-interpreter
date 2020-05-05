@@ -65,7 +65,10 @@ def combine_list(lst):
 
 print(combine_list(lst))
 
+from nodes import *
 
+test = node()
+print(test)
 
 
 # print(functools.reduce(lambda a,b: a if a>b else b ,lst))
