@@ -1,5 +1,5 @@
 run wordt 10
-start wordt run
+start wordt "start waarde"
 
 zolang run
     laat_zien run 

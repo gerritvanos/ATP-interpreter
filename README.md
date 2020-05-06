@@ -137,7 +137,7 @@ De visit functie returned na het uitvoeren van de hele regel een nieuwe program_
 
 # Programeertaal (gerrit--) 
 ## Algemene info
-Ik heb er voor gekozen om mijn eigen programeertaal te maken, mijn doel was om een "vernederlandste" versie van C te maken. In de loop van het proces heb ik er meer een combinatie van preprocessor macro's en C van gemaakt in het nederlands. Hieronder staan alle op dit moment mogelijke commando's uitgelegd met ook wat voorbeeldcode. Het is geen volledige vervanger van C zo is het bijvoorbeeld "nog" niet mogelijk om functies te maken of andere types op te slaan dan getallen. De naam van de taal is "gerrit--" geworden, voornamelijk omdat het door mij bedacht is en nogal vervelend is om in te programeren(vandaar de --).
+Ik heb er voor gekozen om mijn eigen programeertaal te maken, mijn doel was om een "vernederlandste" versie van C te maken. In de loop van het proces heb ik er meer een combinatie van preprocessor macro's en C van gemaakt in het nederlands. Hieronder staan alle op dit moment mogelijke commando's uitgelegd met ook wat voorbeeldcode. Het is geen volledige vervanger van C zo is het bijvoorbeeld "nog" niet mogelijk om functies te maken. De naam van de taal is "gerrit--" geworden, voornamelijk omdat het door mij bedacht is en nogal vervelend is om in te programeren(vandaar de --).
 
 ## Operators
 |operator|uitleg|C equivalent|
@@ -232,6 +232,7 @@ test_var4 wordt -10             //wordt opgeslagen als -10
 ```
 ### Variabelen
 Variabelen kunnen pas in operators of statements gebruikt worden als deze aangemaakt zijn, de eerste keer dat een variabele naam dus gebruikt wordt moet in combinatie met een <b>wordt</b> operator. Variabelen aanmaken zonder start waarde is niet toegestaan.
+Strings kunnen wel opgeslagen worden door de "" tekens te gebruiken er zijn echter geen operaties mogelijk met
 ```c
 //do
 var1 wordt 10               //var1 = 10
@@ -239,6 +240,7 @@ var2 wordt var1 min 5       //var2 = 5
 
 //don't
 var3 wordt var4 min var1    //var4 is nog nooit aangemaakt en kan dus niet gebruikt worden
+str wordt "test"            //kan wel opgeslagen worden en geprint maar kunnen geen operaties op gedaan worden
 ```
 ### Regels zonder effect
 Regels code die geen effect heeft zoals in de voorbeelden hieronder kunnen niet uitgevoerd worden.
