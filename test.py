@@ -75,5 +75,6 @@ print(token_types["OPERATOR_PLUS"].value)
 test = node()
 print(test)
 
-
+for item in token_types:
+    print(item)
 # print(functools.reduce(lambda a,b: a if a>b else b ,lst))

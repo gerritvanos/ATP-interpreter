@@ -28,6 +28,12 @@ class token_types(Enum):
         member.__name__ = name
         return member
 
+    def __str__(self) -> str:
+        return "token_type: {}, value: {}, str: {}".format(self.name,self.value,self.__name__)
+    
+    def __repr__(self) -> str:
+        return self.__str__()
+
 #tuple with strings used to check if input string is operator
 token_operator_strings = tuple(filter(None, list(map(lambda t: t.__name__ if t.value in all_op else None, token_types))))
 #tuple with all operator token types
