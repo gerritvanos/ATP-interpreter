@@ -150,6 +150,9 @@ Ik heb er voor gekozen om mijn eigen programeertaal te maken, mijn doel was om e
 |var1 <b>kleiner_dan</b> var2| geeft 1 als var1 kleiner is dan var2 anders 0| var1 < var2|
 |var1 <b>groter_dan</b> var2| geeft 1 als var1 groter is dan var2 anders 0| var1 > var2|
 |var1 <b>gelijk_aan</b> var2| geeft 1 als var1 gelijk is aan var2 anders 0| var1 == var2|
+|var1 <b>anders_dan</b> var2| geeft 1 als var1 niet gelijk is aan var2 anders 0| var1 != var2|
+|var1 <b>groter_gelijk</b> var2| geeft 1 als var1 gelijk is aan of groter is dan var2 anders 0| var1 >= var2|
+|var1 <b>kleiner_gelijk</b> var2| geeft 1 als var1 gelijk is aan of kleiner is dan var2 anders 0| var1 <= var2|
 |var_name <b>wordt</b> const/expr/var_name| slaat de waarde aan de rechterkant van de <b>wordt</b> op in de gespecificeerde variabele naam| var_name = 1 / var_name = 1 + 2 / var_name = var2|
 
 bij alle operators is het mogelijk om deze te combineren, er wordt rekening gehouden met de rekenregels hieronder een lijst met de prioriteit van de operators. Daarnaast kunnen alle variabeles die aangemaakt zijn binnen het programma gebruikt worden op de plaats van var1/var2 in bovenstaande tabel. Tevens kunnen hier ook constantes staan.
