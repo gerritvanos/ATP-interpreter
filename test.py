@@ -67,6 +67,11 @@ print(combine_list(lst))
 
 from nodes import *
 
+from token_types import token_types
+for item in token_types:
+    print(item.__name__)
+print(list(map(lambda item: item.__name__,token_types)))
+print(token_types["OPERATOR_PLUS"].value)
 test = node()
 print(test)
 

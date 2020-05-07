@@ -68,3 +68,4 @@ op_precedence1 = (op_macht,)
 op_precedence2 = (op_keer,op_delen)
 op_precedence3 = (op_min,op_plus)
 op_precedence4 = (op_assign,op_gelijk,op_groter_dan,op_kleiner_dan)
+all_op = op_precedence1 + op_precedence2 + op_precedence3 + op_precedence4
