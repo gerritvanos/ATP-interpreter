@@ -10,6 +10,9 @@ class token_types(Enum):
     OPERATOR_GELIJK_AAN = op_gelijk, "gelijk_aan"
     OPERATOR_KLEINER_DAN = op_kleiner_dan, "kleiner_dan"
     OPERATOR_GROTER_DAN = op_groter_dan, "groter_dan"
+    OPERATOR_GROTER_GELIJK = op_groter_gelijk, "groter_gelijk"
+    OPERATOR_KLEINER_GELIJK = op_kleiner_gelijk, "kleiner_gelijk"
+    OPERATOR_NIET_GELIJK = op_niet_gelijk, "anders_dan"
     ALS_STATEMENT = 11, "als_waar"
     EINDE_ALS = 12, "einde_als"
     ZOLANG_START = 13, "zolang"
@@ -25,5 +28,5 @@ class token_types(Enum):
         member.__name__ = name
         return member
 
-token_operator_strings = list(filter(None, list(map(lambda t: t.__name__ if t.value in all_op else None, token_types))))
-token_operator_types   = list(filter(None, list(map(lambda t: t if t.value in all_op else None, token_types))))
+token_operator_strings = tuple(filter(None, list(map(lambda t: t.__name__ if t.value in all_op else None, token_types))))
+token_operator_types   = tuple(filter(None, list(map(lambda t: t if t.value in all_op else None, token_types))))

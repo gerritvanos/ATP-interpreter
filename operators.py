@@ -28,6 +28,15 @@ def op_groter_dan(a : Union[int,float],b : Union[int,float]) -> int:
 def op_kleiner_dan(a : Union[int,float],b : Union[int,float]) -> int:
     return int(a < b)
 
+def op_groter_gelijk(a : Union[int,float],b : Union[int,float]) -> int:
+    return int(a >= b)
+
+def op_kleiner_gelijk(a : Union[int,float],b : Union[int,float]) -> int:
+    return int(a <= b)
+
+def op_niet_gelijk(a : Union[int,float],b : Union[int,float]) -> int:
+    return int(a != b)
+
 #operators to modify program state and check ifs
 def op_als(conditie : Union[int,float], aantal_regels : int) -> int:
     """
@@ -67,5 +76,6 @@ def op_print(to_print : Union[int,float], program_state : program_state) -> prog
 op_precedence1 = (op_macht,)
 op_precedence2 = (op_keer,op_delen)
 op_precedence3 = (op_min,op_plus)
-op_precedence4 = (op_assign,op_gelijk,op_groter_dan,op_kleiner_dan)
+op_precedence4 = (op_assign,op_gelijk,op_groter_dan,op_kleiner_dan,\
+                  op_groter_gelijk, op_kleiner_gelijk, op_niet_gelijk)
 all_op = op_precedence1 + op_precedence2 + op_precedence3 + op_precedence4

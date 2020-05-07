@@ -1,7 +1,7 @@
 from nodes import *
 from operators import *
 from token_class import token
-from token_types import token_types
+from token_types import token_types, token_operator_types
 from lex import lex
 from typing import List,Tuple,Callable,Union
 from time import time
@@ -16,7 +16,7 @@ def parse_tokens_to_nodes(tokens : List[token]) -> List[node]:
     if len(tokens) == 0:
         return []
     a, *tail = tokens
-    if a.token_type in (token_types.OPERATOR_DELEN, token_types.OPERATOR_KEER, token_types.OPERATOR_MIN, token_types.OPERATOR_PLUS, token_types.OPERATOR_MACHT, token_types.OPERATOR_ASSIGN, token_types.OPERATOR_GELIJK_AAN, token_types.OPERATOR_GROTER_DAN, token_types.OPERATOR_KLEINER_DAN):
+    if a.token_type in token_operator_types:
         return [op_node(node,a.value,node)] + parse_tokens_to_nodes(tail) 
     if a.token_type in (token_types.ALS_STATEMENT,):
         return [als_node(node,a.value,0)] + parse_tokens_to_nodes(tail) 

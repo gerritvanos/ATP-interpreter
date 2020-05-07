@@ -6,6 +6,7 @@ zolang run
     run wordt run min 1 
 einde_zolang 
 
+laat_zien 1 kleiner_gelijk 10
 laat_zien "start waarde"
 laat_zien start
 laat_zien "eind waarde run"
