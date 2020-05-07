@@ -10,6 +10,7 @@ Ook wordt uitgelegd hoe de interpreter gestart en gebruikt kan worden.
 |[interpreter structuur](#interpreter-structuur)|
 |[Programeertaal (gerrit--)](#programeertaal-gerrit--)| 
 |[How to run](#how-to-run)|
+|[opdracht requirements](#opdracht-requirements)|
 
 # Bestands structuur
 ## Bestanden
@@ -286,3 +287,9 @@ Voor de opdracht moest de taal turing compleet zijn, gezien mijn taal de mogelij
 
 Daarnaast moest er inheritance verwerkt zijn, dit is de vinden in de [nodes.py](nodes.py) file waar alle nodes afgeleid zijn van een basis node.
 verder moesten er minimaal 3 hogere orde functies gebruikt zijn, in zowel de [lexer](lex.py) als de [parser](parser_atp.py) is de `map` functie gebruikt.
+
+Daarnaast zijn de decorators te vinden in zowel de [lexer](lex.py) als de [parser](parser_atp.py) is een decorator geimplementeerd om verbose te kunnen lexen en parsen.
+
+Als shouldhaves heb ik gekozen voor een aantal advanced features zoals bijvoorbeeld een macht operator en meerdere operators buiten alleen plus en min. Evenals een print statement en de mogelijkheid om strings te printen en op te slaan.
+
+Daarnaast is de shouldhave eigen taal ook gekozen uiteraard.
