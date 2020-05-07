@@ -28,5 +28,7 @@ class token_types(Enum):
         member.__name__ = name
         return member
 
+#tuple with strings used to check if input string is operator
 token_operator_strings = tuple(filter(None, list(map(lambda t: t.__name__ if t.value in all_op else None, token_types))))
+#tuple with all operator token types
 token_operator_types   = tuple(filter(None, list(map(lambda t: t if t.value in all_op else None, token_types))))

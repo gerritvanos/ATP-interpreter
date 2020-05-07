@@ -1,7 +1,7 @@
 run wordt 10
 start wordt "start waarde"
 
-zolang run
+zolang run groter_gelijk 0
     laat_zien run 
     run wordt run min 1 
 einde_zolang 
